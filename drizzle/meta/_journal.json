@@ -15,6 +15,20 @@
       "when": 1752695382712,
       "tag": "0001_shallow_terrax",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1752695796314,
+      "tag": "0002_chief_wild_child",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1752695918192,
+      "tag": "0003_damp_callisto",
+      "breakpoints": true
     }
   ]
 }
