@@ -1,10 +1,13 @@
 import { defineConfig } from "drizzle-kit";
+import { env } from "./src/env";
+import "dotenv/config"; 
 
 export default defineConfig({
   schema: "./src/db/schema/index.ts",
   out: "./drizzle",
   dialect: "postgresql",
   dbCredentials: {
-    url: "postgresql://docker:docker@localhost:5432/pizzashop",
+    url: env.DATABASE_URL 
   },
 });
+
