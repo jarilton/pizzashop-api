@@ -1,11 +1,9 @@
-import { Elysia } from 'elysia';
+import { Elysia } from 'elysia'
 
-const app = new Elysia()
-.get('/', () => {
-  return 'Welcome to PizzaShop API!';
+const app = new Elysia().get('/', () => {
+  return 'Welcome to PizzaShop API!'
 })
 
 app.listen(3333, () => {
-  console.log('Server is running');
-});
-
+  console.log('Server is running')
+})
