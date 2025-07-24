@@ -1,43 +1,54 @@
-import { Elysia } from 'elysia'
+import { Elysia, t } from 'elysia'
 import { db } from '../db/connection'
 import { restaurants, users } from '../db/schema'
 
-const app = new Elysia().post('/restaurants', async ({ body, set }) => {
-  const { restaurantName, name, email, phone } = body as any
+const app = new Elysia().post(
+  '/restaurants',
+  async ({ body, set }) => {
+    const { restaurantName, managerName, email, phone } = body
 
-  const [manager] = await db
-    .insert(users)
-    .values({
-      name,
-      email,
-      phone,
-      role: 'manager',
-    })
-    .returning({
-      id: users.id,
-    })
+    const [manager] = await db
+      .insert(users)
+      .values({
+        name: managerName,
+        email,
+        phone,
+        role: 'manager',
+      })
+      .returning({
+        id: users.id,
+      })
 
-  const [restaurant] = await db
-    .insert(restaurants)
-    .values({
-      name: restaurantName,
-      managerId: manager?.id,
-    })
-    .returning({
-      id: restaurants.id,
-      name: restaurants.name,
-      description: restaurants.description,
-      createdAt: restaurants.createdAt,
-      updatedAt: restaurants.updatedAt,
-    })
+    const [restaurant] = await db
+      .insert(restaurants)
+      .values({
+        name: restaurantName,
+        managerId: manager?.id,
+      })
+      .returning({
+        id: restaurants.id,
+        name: restaurants.name,
+        description: restaurants.description,
+        createdAt: restaurants.createdAt,
+        updatedAt: restaurants.updatedAt,
+      })
 
-  set.status = 204
+    set.status = 204
 
-  return {
-    message: 'Restaurant created successfully',
-    restaurant,
-  }
-})
+    return {
+      message: 'Restaurant created successfully',
+      restaurant,
+    }
+  },
+  {
+    body: t.Object({
+      restaurantName: t.String(),
+      managerName: t.String(),
+      email: t.String({ format: 'email' }),
+      phone: t.String(),
+    }),
+  },
+)
 
 app.listen(3333, () => {
   console.log('Server is running')
