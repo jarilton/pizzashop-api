@@ -1,0 +1,1 @@
+ALTER TABLE "auth_links" ADD COLUMN "code" text NOT NULL;

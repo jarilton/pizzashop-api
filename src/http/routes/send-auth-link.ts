@@ -1,0 +1,49 @@
+import { authLinks } from './../../db/schema/auth-links'
+import Elysia, { t } from 'elysia'
+import { db } from '../../db/connection'
+import { createId } from '@paralleldrive/cuid2'
+import { env } from '../../env'
+
+export const sendAuthLink = new Elysia().post(
+  '/authenticate',
+  async ({ body, set }) => {
+    const { email } = body
+
+    const userFromEmail = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.email, email),
+    })
+
+    if (!userFromEmail) {
+      throw new Error('User not found')
+    }
+
+    const authLinkCode = createId()
+
+    await db.insert(authLinks).values({
+      userId: userFromEmail.id,
+      code: authLinkCode,
+    })
+
+    // enviar email com o link de autenticação
+
+    const authLink = new URL('/auth-links/authenticate', env.API_BASE_URL)
+
+    authLink.searchParams.set('code', authLinkCode)
+    authLink.searchParams.set('redirect', env.AUTH_REDIRECT_URL)
+
+    // Aqui você deve implementar a lógica de envio de email com o link de autenticação
+    console.log(`Enviar email para ${email} com o link: ${authLink.toString()}`)
+
+    set.status = 204
+
+    return {
+      message: 'Authentication link sent successfully',
+      authLink: authLink.toString(),
+    }
+  },
+  {
+    body: t.Object({
+      email: t.String({ format: 'email' }),
+    }),
+  },
+)
